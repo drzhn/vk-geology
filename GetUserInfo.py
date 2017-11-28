@@ -78,9 +78,9 @@ def GetSettings():
         settings = json.load(outfile)
     return settings
 
-
-# SaveUserInfoToJson(settings['user_id'], settings['post_id'], settings['token'])
-GetUserInfoFromJson()
+settings = GetSettings()
+SaveUserInfoToJson(settings['user_id'], settings['post_id'], settings['token'])
+# GetUserInfoFromJson()
 
 
 

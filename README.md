@@ -7,3 +7,4 @@ https://oauth.vk.com/authorize?client_id=6271151&display=page&redirect_uri=https
 и id искомого поста, вставить нужные значения
 
 затем запустить файл GetUserInfo.py. Он запишет в файл data.txt список всех друзей и групп пользователя и текст поста
+потом файл Geology.py, он произведет поиск
