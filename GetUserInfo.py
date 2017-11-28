@@ -20,21 +20,45 @@ def GetFriendsIds(user_id):
         sleep(0.5)
     return ret
 
-def GetUserFirstPost(user_id, token):
-    payload = {'owner_id': str(user_id), 'filter': 'all', 'count':'1', 'offset':'0','access_token':token}
-    r = requests.get('https://api.vk.com/method/wall.get', params=payload)
+
+def GetGroupsIds(user_id, token):
+    communities = []
+    i = 0
+    count = 100  # качаем сразу по сто
+    ret = []
+    while len(communities) != 1:
+        payload = {'user_id': str(user_id), 'count': str(count), 'offset': i * count, 'access_token': token}
+        r = requests.get('https://api.vk.com/method/groups.get', params=payload)
+        communities = r.json()['response']
+        ret = ret + communities[1:]
+        i += 1
+        sleep(0.5)
+    return ret
+
+
+def GetUserPost(user_id, post_id, token):
+    payload = {'posts': str(user_id) + '_' + str(post_id), 'access_token': token}
+    r = requests.get('https://api.vk.com/method/wall.getById', params=payload)
     for m in r.json()['response']:
         if type(m) is dict:
             return str(m['text'])
 
-def SaveUserInfoToJson(user_id, token):
-    data = {'friends':GetFriendsIds(user_id), 'first_post':GetUserFirstPost(user_id, token)}
+
+def SaveUserInfoToJson(user_id, post_id, token):
+    data = {'friends': GetFriendsIds(user_id), 'groups': GetGroupsIds(user_id, token),
+            'post': GetUserPost(user_id, post_id, token)}
     with open('data.txt', 'w') as outfile:
         json.dump(data, outfile)
 
-def GetUserInfoToJson():
-    with open('data.txt', 'r') as outfile:
-        print(json.load(outfile)['first_post'])
 
-# SaveUserInfoToJson(170900699, 'a88996d7729f9031fb5a29bccb29b8e04f725cd51dc4c6fbd4a85fa5252c79815017a9513b001b3ed414a')
-GetUserInfoToJson()
+def GetUserInfoFromJson():
+    with open('data.txt', 'r') as outfile:
+        ret = json.load(outfile)
+        print(ret['post'])
+    return ret
+
+
+with open('settings.txt', 'r') as outfile:
+    settings = json.load(outfile)
+# SaveUserInfoToJson(settings['user_id'], settings['post_id'], settings['token'])
+GetUserInfoFromJson()
