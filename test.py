@@ -1,3 +1,5 @@
+# тестовый файл, в проекте не нужен
+
 import requests
 from time import sleep
 
